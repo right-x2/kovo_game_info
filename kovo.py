@@ -233,6 +233,9 @@ for game_idx in range(len(game_list)):
                         #print(f"{op_name} {op_pos_num} {op_pos}")
                     temp = [round,away_team,home_team,set,setter,setter_pos_num,op_name,op_pos_num,op_type,"실패",fail_type,away_score,home_score,away_score-home_score]
                     lst.append(temp)
-
+            if(txt_temp[-2:]=="정확"):
+                save = 1
+            else:
+                save = 0
 df1 = pd.DataFrame(data = np.array(lst),columns=["라운드","팀","상대팀","SET","세터이름","세터 포지션번호","공격수이름","공격수 포지션번호","공격유형","세트성공여부","실패유형","팀 점수","상대팀 점수","점수차이"])
-df1.to_csv("/Users/kimjungwoo/Downloads/kovo_setter.csv")
+df1.to_csv("/Users/kimjungwoo/Downloads/gs_setter.csv")
