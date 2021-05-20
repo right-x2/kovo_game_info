@@ -7,7 +7,7 @@ from selenium.webdriver.common.alert import Alert
 from bs4 import BeautifulSoup
 
 options = webdriver.ChromeOptions()
-#options.add_argument("headless")
+options.add_argument("headless")
 options.add_argument('window-size=1920x1080')
 options.add_argument("disable-gpu")
 options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
@@ -57,7 +57,6 @@ game_list21 = get_list21()
 #game_list20 = get_list20()
 
 
-setter_list = ["김다인","김다솔","안혜진","이다영","이원정","이나연","조송화","김하경","하효림","염혜선","김명관","김형진"]
 
 
 
@@ -80,8 +79,6 @@ def get_info(game_list,season):
         set_len = int(list[0].text)+int(list[1].text)
         
         #print(set_len)
-        if(home_team!="GS칼텍스" and away_team!="GS칼텍스"):
-            continue
         print(f"{round}라운드 {home_team}vs{away_team}")
         for set in range(1,1+set_len):
             driver.get(f'https://www.kovo.co.kr/media/popup_result.asp?season={season}&g_part=201&r_round={round}&g_num={game_list[game_idx]}&r_set={set}')
@@ -147,6 +144,7 @@ def get_info(game_list,season):
                     #print(players)
                     #print(position_num)
                     save = 0
+                    serve_flag = 0
                     if(home_score<int(text_list[idx].find("span",{"class":"score_left"}).get_text())):
                         if(serve=="right"):
                             serve = "left"
@@ -177,8 +175,9 @@ def get_info(game_list,season):
                     #print(position_num)
     
                 if(home_txt.find("세트")> -1):
-                    if(away_team=="GS칼텍스"):
+                    if(serve_flag==1):
                         continue
+                    serve_flag = 1
                     if(home_txt[-2:]=="성공"):
                         succes = succes+1
                         setter = home_txt[home_txt.find(".")+1:home_txt.find(" ")]
@@ -225,8 +224,11 @@ def get_info(game_list,season):
                         lst.append(temp)
                 
                 elif(away_txt.find("세트")> -1):
-                    if(home_team=="GS칼텍스"):
+                    if(home_team=="현대건설" or serve=="right"):
                         continue
+                    if(serve_flag==1):
+                        continue
+                    serve_flag = 1
                     if(away_txt[-2:]=="성공"):
                         succes = succes+1
                         setter = away_txt[away_txt.find(".")+1:away_txt.find(" ")]
@@ -284,4 +286,4 @@ get_info(game_list21,"017")
 
 
 df1 = pd.DataFrame(data = np.array(lst),columns=["라운드","SET","팀","상대팀","세터","1번","2번","3번","4번","5번","6번","상대 2번","상대 3번","상대 4번","공격수","공격유형","팀 점수","상대팀 점수","점수차이","리시브정확"])
-df1.to_csv("/Users/kimjungwoo/Downloads/gs_setter.csv")
+df1.to_csv("/Users/kimjungwoo/Downloads/hyundai_setter.csv")
